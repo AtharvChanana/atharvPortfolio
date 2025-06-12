@@ -5,11 +5,11 @@ import { Column, Flex, Text } from "@once-ui-system/core";
 import styles from "./about.module.scss";
 
 interface TableOfContentsProps {
-  structure: {
-    title: string;
-    display: boolean;
-    items: string[];
-  }[];
+  structure: ReadonlyArray<{
+    readonly title: string;
+    readonly display: boolean;
+    readonly items: readonly string[];
+  }>;
   about: {
     tableOfContent: {
       display: boolean;

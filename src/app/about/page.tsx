@@ -16,6 +16,19 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
+import { About as AboutType, Experience, Certificate, Skill, ImageAsset } from "@/types";
+
+// Type assertion for the about object
+const typedAbout = about as unknown as AboutType;
+
+// Helper function to safely access experience properties
+const getExperienceData = (experience: Experience) => ({
+  company: experience.company || '',
+  role: experience.role || '',
+  timeframe: experience.timeframe || '',
+  achievements: experience.achievements || [],
+  images: experience.images || []
+});
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -28,33 +41,34 @@ export async function generateMetadata() {
 }
 
 export default function About() {
+  // Define the structure for the table of contents
   const structure = [
     {
-      title: about.intro.title,
-      display: about.intro.display,
+      title: typedAbout.intro.title,
+      display: typedAbout.intro.display,
       items: [],
     },
     {
-      title: about.work.title,
-      display: about.work.display,
-      items: about.work.experiences ? about.work.experiences.map((experience) => experience.company) : [],
+      title: typedAbout.work.title,
+      display: typedAbout.work.display,
+      items: typedAbout.work.experiences?.map((exp: Experience) => exp.company || '') || [],
     },
     {
-      title: about.studies.title,
-      display: about.studies.display,
-      items: about.studies.institutions.map((institution) => institution.name),
+      title: typedAbout.studies.title,
+      display: typedAbout.studies.display,
+      items: typedAbout.studies.institutions.map((institution) => institution.name),
     },
     {
-      title: about.certificates.title,
-      display: about.certificates.display,
-      items: about.certificates.items.map((cert) => cert.title),
+      title: typedAbout.certificates.title,
+      display: typedAbout.certificates.display,
+      items: typedAbout.certificates.items.map((cert) => cert.title),
     },
     {
-      title: about.technical.title,
-      display: about.technical.display,
-      items: about.technical.skills.map((skill) => skill.title),
+      title: typedAbout.technical.title,
+      display: typedAbout.technical.display,
+      items: typedAbout.technical.skills.map((skill) => skill.title),
     },
-  ];
+  ] as const;
   return (
     <Column maxWidth="m">
       <Schema
@@ -196,78 +210,56 @@ export default function About() {
                 {about.work.title}
               </Heading>
               <Column fillWidth gap="l" marginBottom="40">
-                {about.work.experiences.map((experience, index) => (
-                  <Column key={`${experience.company}-${experience.role}-${index}`} fillWidth>
-                    <Flex fillWidth horizontal="space-between" vertical="end" marginBottom="4">
-                      <Text id={experience.company} variant="heading-strong-l">
-                        {experience.company}
-                      </Text>
-                      <Text variant="heading-default-xs" onBackground="neutral-weak">
-                        {experience.timeframe}
-                      </Text>
-                    </Flex>
-                    <Text variant="body-default-s" onBackground="brand-weak" marginBottom="m">
-                      {experience.role}
-                    </Text>
-                    <Column as="ul" gap="16">
-                      {experience.achievements.map((achievement: JSX.Element, index: number) => (
-                        <Text
-                          as="li"
-                          variant="body-default-m"
-                          key={`${experience.company}-${index}`}
-                        >
-                          {achievement}
+                {typedAbout.work.experiences?.map((exp, index) => {
+                  const experience = getExperienceData(exp as Experience);
+                  return (
+                    <Column key={`${experience.company}-${experience.role}-${index}`} fillWidth>
+                      <Flex fillWidth horizontal="space-between" vertical="end" marginBottom="4">
+                        <Text id={experience.company} variant="heading-strong-l">
+                          {experience.company}
                         </Text>
-                      ))}
-                    </Column>
-                    {experience.images.length > 0 && (
-                      <Flex fillWidth paddingTop="m" paddingLeft="40" gap="12" wrap>
-                        {experience.images.map((image, index) => (
-                          <Flex
-                            key={index}
-                            border="neutral-medium"
-                            radius="m"
-                            //@ts-ignore
-                            minWidth={image.width}
-                            //@ts-ignore
-                            height={image.height}
-                          >
-                            <Media
-                              enlarge
-                              radius="m"
-                              //@ts-ignore
-                              sizes={image.width.toString()}
-                              //@ts-ignore
-                              alt={image.alt}
-                              //@ts-ignore
-                              src={image.src}
-                            />
-                          </Flex>
-                        ))}
+                        <Text variant="heading-default-xs" onBackground="neutral-weak">
+                          {experience.timeframe}
+                        </Text>
                       </Flex>
-                    )}
-                  </Column>
-                ))}
-              </Column>
-            </>
-          )}
-
-          {about.studies.display && (
-            <>
-              <Heading as="h2" id={about.studies.title} variant="display-strong-s" marginBottom="m">
-                {about.studies.title}
-              </Heading>
-              <Column fillWidth gap="l" marginBottom="40">
-                {about.studies.institutions.map((institution, index) => (
-                  <Column key={`${institution.name}-${index}`} fillWidth gap="4">
-                    <Text id={institution.name} variant="heading-strong-l">
-                      {institution.name}
-                    </Text>
-                    <Text variant="heading-default-xs" onBackground="neutral-weak">
-                      {institution.description}
-                    </Text>
-                  </Column>
-                ))}
+                      <Text variant="body-default-s" onBackground="brand-weak" marginBottom="m">
+                        {experience.role}
+                      </Text>
+                      <Column as="ul" gap="16">
+                        {experience.achievements.map((achievement: React.ReactNode, idx: number) => (
+                          <Text
+                            as="li"
+                            variant="body-default-m"
+                            key={`${experience.company}-${idx}`}
+                          >
+                            {achievement}
+                          </Text>
+                        ))}
+                      </Column>
+                      {experience.images && experience.images.length > 0 && (
+                        <Flex fillWidth paddingTop="m" paddingLeft="40" gap="12" wrap>
+                          {experience.images.map((image: any, imgIdx: number) => (
+                            <Flex
+                              key={imgIdx}
+                              border="neutral-medium"
+                              radius="m"
+                              minWidth={image.width}
+                              height={image.height}
+                            >
+                              <Media
+                                enlarge
+                                radius="m"
+                                sizes={image.width?.toString() || '100%'}
+                                alt={image.alt || ''}
+                                src={image.src}
+                              />
+                            </Flex>
+                          ))}
+                        </Flex>
+                      )}
+                    </Column>
+                  );
+                })}
               </Column>
             </>
           )}
@@ -349,40 +341,42 @@ export default function About() {
                 {about.technical.title}
               </Heading>
               <Column fillWidth gap="l">
-                {about.technical.skills.map((skill, index) => (
-                  <Column key={`${skill}-${index}`} fillWidth gap="4">
-                    <Text variant="heading-strong-l">{skill.title}</Text>
-                    <Text variant="body-default-m" onBackground="neutral-weak">
-                      {skill.description}
-                    </Text>
-                    {skill.images && skill.images.length > 0 && (
-                      <Flex fillWidth paddingTop="m" gap="12" wrap>
-                        {skill.images.map((image, index) => (
-                          <Flex
-                            key={index}
-                            border="neutral-medium"
-                            radius="m"
-                            //@ts-ignore
-                            minWidth={image.width}
-                            //@ts-ignore
-                            height={image.height}
-                          >
-                            <Media
-                              enlarge
+                {about.technical.skills.map((skill, index) => {
+                  // Ensure skill.images is properly typed as ImageAsset[]
+                  const images = skill.images as ImageAsset[] | undefined;
+                  
+                  return (
+                    <Column key={`${skill.title}-${index}`} fillWidth gap="4">
+                      <Text variant="heading-strong-l">{skill.title}</Text>
+                      <Text variant="body-default-m" onBackground="neutral-weak">
+                        {skill.description}
+                      </Text>
+                      {images && images.length > 0 && (
+                        <Flex fillWidth paddingTop="m" gap="12" wrap>
+                          {images.map((image, imgIndex) => (
+                            <Flex
+                              key={imgIndex}
+                              border="neutral-medium"
                               radius="m"
-                              //@ts-ignore
-                              sizes={image.width.toString()}
-                              //@ts-ignore
-                              alt={image.alt}
-                              //@ts-ignore
-                              src={image.src}
-                            />
-                          </Flex>
-                        ))}
-                      </Flex>
-                    )}
-                  </Column>
-                ))}
+                              style={{
+                                minWidth: image.width ? `${image.width}px` : 'auto',
+                                height: image.height ? `${image.height}px` : 'auto',
+                              }}
+                            >
+                              <Media
+                                enlarge
+                                radius="m"
+                                sizes={image.width ? image.width.toString() : '100%'}
+                                alt={image.alt || ''}
+                                src={image.src}
+                              />
+                            </Flex>
+                          ))}
+                        </Flex>
+                      )}
+                    </Column>
+                  );
+                })}
               </Column>
             </>
           )}
