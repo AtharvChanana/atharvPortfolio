@@ -1,120 +1,69 @@
-import { ImageResponse } from "next/og";
-import { baseURL, person } from "@/resources";
+import { ImageResponse } from '@vercel/og';
+import { NextRequest } from 'next/server';
+import { person } from '@/resources';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
-export async function GET(request: Request) {
-  let url = new URL(request.url);
-  let title = url.searchParams.get("title") || "Portfolio";
-  /*
-  const font = fetch(new URL("../../../public/fonts/Inter.ttf", import.meta.url)).then((res) =>
-    res.arrayBuffer(),
-  );
-  const fontData = await font;
-  */
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const title = searchParams.get('title') || 'Portfolio';
 
   return new ImageResponse(
     <div
       style={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
-        padding: "8rem",
-        background: "#151515",
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#151515',
+        padding: '4rem',
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          gap: "4rem",
-          fontFamily: "Inter",
-          fontStyle: "normal",
-          color: "white",
-        }}
-      >
-        <span
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <h1
           style={{
-            fontSize: "8rem",
-            lineHeight: "8rem",
-            letterSpacing: "-0.05em",
-            whiteSpace: "pre-wrap",
-            textWrap: "balance",
+            fontSize: '4rem',
+            fontWeight: 700,
+            color: 'white',
+            maxWidth: '800px',
+            textAlign: 'center',
+            lineHeight: 1.2,
+            margin: 0,
           }}
         >
           {title}
-        </span>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5rem",
-          }}
-        >
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           <div
             style={{
-              width: "12rem",
-              height: "12rem",
-              position: 'relative',
-              borderRadius: "100%",
-              overflow: 'hidden'
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              overflow: 'hidden',
             }}
           >
             <img
-              src={baseURL + person.avatar}
-              alt=""
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              src={`https://${req.headers.get('host') || ''}${person.avatar}`}
+              alt={person.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.75rem",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "4.5rem",
-                lineHeight: "4.5rem",
-                whiteSpace: "pre-wrap",
-                textWrap: "balance",
-              }}
-            >
+          <div>
+            <p style={{ color: 'white', fontSize: '1.5rem', margin: 0 }}>
               {person.name}
-            </span>
-            <span
-              style={{
-                fontSize: "2.5rem",
-                lineHeight: "2.5rem",
-                whiteSpace: "pre-wrap",
-                textWrap: "balance",
-                opacity: "0.6",
-              }}
-            >
+            </p>
+            <p style={{ color: '#999', fontSize: '1.25rem', margin: '0.25rem 0 0 0' }}>
               {person.role}
-            </span>
+            </p>
           </div>
         </div>
       </div>
     </div>,
     {
-      width: 1280,
-      height: 720,
-      /*
-      fonts: [
-        {
-          name: "Inter",
-          data: fontData,
-          style: "normal",
-        },
-      ],
-      */
-    },
+      width: 1200,
+      height: 630,
+    }
   );
 }
