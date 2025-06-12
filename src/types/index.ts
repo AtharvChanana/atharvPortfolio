@@ -63,6 +63,19 @@ export interface Work {
   experiences: Experience[];
 }
 
+export interface GalleryImage {
+  src: string;
+  alt?: string;
+  orientation: 'horizontal' | 'vertical';
+}
+
+export interface Gallery {
+  title: string;
+  description: string;
+  path: string;
+  images: GalleryImage[];
+}
+
 export interface About {
   title: string;
   description: string;

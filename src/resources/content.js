@@ -18,7 +18,7 @@ const person = {
 
 const newsletter = {
   display: false, // Newsletter is disabled
-  title: <>Subscribe to {person.firstName}'s Newsletter</>,
+  title: <>Subscribe to {person.firstName}&apos;s Newsletter</>,
   description: (
     <>
       I write about Artificial Intelligence, Data Science, Java Development, and share my learning journey in technology and problem solving.
@@ -64,7 +64,7 @@ const home = {
   },
   subline: (
     <>
-      I'm Atharv, an AI & Data Science student at VIPS with a strong passion for problem-solving and algorithm design.
+      I&apos;m Atharv, an AI & Data Science student at VIPS with a strong passion for problem-solving and algorithm design.
       <br /> I specialize in implementing efficient solutions using Data Structures and Algorithms in Java.
     </>
   ),

@@ -13,10 +13,11 @@ import {
   Schema
 } from "@once-ui-system/core";
 import { baseURL, about, person, social } from "@/resources";
+import Image from "next/image";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
-import { About as AboutType, Experience, Certificate, Skill, ImageAsset } from "@/types";
+import { About as AboutType, Experience, ImageAsset } from "@/types";
 
 // Type assertion for the about object
 const typedAbout = about as unknown as AboutType;
@@ -238,7 +239,7 @@ export default function About() {
                       </Column>
                       {experience.images && experience.images.length > 0 && (
                         <Flex fillWidth paddingTop="m" paddingLeft="40" gap="12" wrap>
-                          {experience.images.map((image: any, imgIdx: number) => (
+                          {experience.images.map((image: ImageAsset, imgIdx: number) => (
                             <Flex
                               key={imgIdx}
                               border="neutral-medium"
@@ -302,12 +303,14 @@ export default function About() {
                             margin: '0 auto'
                           }}
                         >
-                          <img
+                          <Image
                             src={cert.image}
                             alt={`${cert.title} Certificate`}
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
+                            width={800}
+                            height={450}
+                            style={{
+                              width: '100%',
+                              height: '100%',
                               objectFit: 'contain',
                               display: 'block'
                             }}

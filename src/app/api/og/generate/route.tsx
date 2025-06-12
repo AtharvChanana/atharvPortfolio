@@ -52,15 +52,25 @@ export async function GET(request: Request) {
             gap: "5rem",
           }}
         >
-          <img
-            src={baseURL + person.avatar}
+          <div
             style={{
               width: "12rem",
               height: "12rem",
-              objectFit: "cover",
+              position: 'relative',
               borderRadius: "100%",
+              overflow: 'hidden'
             }}
-          />
+          >
+            <img
+              src={baseURL + person.avatar}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
           <div
             style={{
               display: "flex",
